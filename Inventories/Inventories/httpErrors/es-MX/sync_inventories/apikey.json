@@ -1,0 +1,42 @@
+[
+  {
+     "key":"ApiKeyUnauthorized",
+     "http_status_code":"401",
+     "response":{
+        "message":"The service is not available at the moment.",
+        "status_code":1
+     }
+  },
+  {
+     "key":"ApiKeyInternalServerError",
+     "http_status_code":"500",
+     "response":{
+        "message":"An error occurred, please try again later.",
+        "status_code":2
+     }
+  },
+  {
+     "key":"ApiKeyHeadersNotFound",
+     "http_status_code":"400",
+     "response":{
+        "message":"An error occurred, please try again later.",
+        "status_code":3
+     }
+  },
+  {
+     "key":"ApiKeyConutryCodeNotFound",
+     "http_status_code":"404",
+     "response":{
+        "message":"An error occurred, please try again later.",
+        "status_code":4
+     }
+  },
+  {
+     "key":"ApiKeyInternalError",
+     "http_status_code":"500",
+     "response":{
+        "message":"An error occurred, please try again later.",
+        "status_code":5
+     }
+  }
+]

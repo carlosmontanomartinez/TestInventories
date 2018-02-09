@@ -1,0 +1,178 @@
+[
+  {
+    "key": "InsufficientPoints",
+    "http_status_code": "400",
+    "response": {
+      "message": "No tienes suficientes puntos para completar la transacción, acumula más puntos e inténtalo nuevamente.",
+      "status_code": 1201
+    }
+  },
+  {
+    "key": "PossibleCharge",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, la operación no fue completada. Pudo haberse aplicado algún cargo a tu cuenta. Por favor, contacta a Cineticket al 01 55 2122 6060 para verificar.",
+      "status_code": 1202
+    }
+  },
+  {  
+     "key":"CardNotValid",
+     "http_status_code":"400",
+     "response":{  
+        "message":"Lo sentimos, tu pago no puede ser procesado. Por favor verifica que tus datos sean correctos o inténtalo de nuevo con otro método de pago.",
+        "status_code":1203
+     }
+  },
+  {
+    "key": "InternalServerError",
+    "http_status_code": "500",
+    "response": {
+      "message": "Tu compra no pudo ser completada. Por favor, vuelve a intentarlo en unos minutos.",
+      "status_code": 1204
+    }
+  },
+  {
+    "key": "NoTcc",
+    "http_status_code": "400",
+    "response": {
+      "message": "No hay una tarjeta club cinepolis registrada",
+      "status_code": 1205
+    }
+  },
+  {
+    "key": "ErrorOAuth",
+    "http_status_code": "400",
+    "response": {
+      "message": "Error de autenticacion",
+      "status_code": 1206
+    }
+  },
+  {
+    "key": "LoyaltyCinemaIdNotFound",
+    "http_status_code": "400",
+    "response": {
+      "message": "An error occurred, please try again later.",
+      "status_code": 1207
+    }
+  },
+  {
+    "key": "EmailIsEmpty",
+    "http_status_code": "400",
+    "response": {
+      "message": "El correo electrónico no es válido. Verifica e intenta de nuevo.",
+      "status_code": 1208
+    }
+  },
+  {
+    "key": "NameIsEmpty",
+    "http_status_code": "400",
+    "response": {
+      "message": "El nombre no es válido. Verifica e intenta de nuevo.",
+      "status_code": 1209
+    }
+  },
+  {
+    "key": "TccIsNotValidForPurchase",
+    "http_status_code": "400",
+    "response": {
+      "message": "Tu compra no pudo ser completada. Para más información comunícate a Cineticket al 01 55 122 6060.",
+      "status_code": 1210
+    }
+  },
+  {
+    "key": "NoSessionsGetInOrder",
+    "http_status_code": "400",
+    "response": {
+      "message": "Tu compra no pudo ser completada. Por favor, vuelve a intentarlo en unos minutos.",
+      "status_code": 1211
+    }
+  },
+  {
+    "key": "UnpaidBookingInvalid",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, esta función no está disponible para reserva.",
+      "status_code": 1212
+    }
+  },
+  {
+    "key": "InvalidModel",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, verifica los datos proporcionados.",
+      "status_code": 1213
+    }
+  },
+  {
+    "key": "SectionIsNotAuthorized",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, verifica los datos proporcionados para esta sección.",
+      "status_code": 1214
+    }
+  },
+  {
+    "key": "PaymentMethodIsNotAuthorized",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, verifica los datos proporcionados para este método de pago.",
+      "status_code": 1215
+    }
+  },
+  {
+    "key": "PaymentMethodNameIsNotProvided",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, verifica los datos proporcionados para el método de pago actual.",
+      "status_code": 1216
+    }
+  },
+  {
+    "key": "PaymentMethodCountryError",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, verifica los datos proporcionados para la sesión actual.",
+      "status_code": 1217
+    }
+  },
+  {
+    "key": "PaymentMethodEmailError",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, verifica los datos proporcionados para la sesión del usuario.",
+      "status_code": 1218
+    }
+  },
+  {
+    "key": "TokenNotGenerated",
+    "http_status_code": "500",
+    "response": {
+      "message": "Lo sentimos, ha ocurrido un error al verificar la cuenta.",
+      "status_code": 1219
+    }
+  },
+  {
+    "key": "ClubCinepolisCardNotSupplied",
+    "http_status_code": "400",
+    "response": {
+      "message": "Lo sentimos, tu número de Tarjeta Club Cinépolis no es válido. Por favor, intenta de nuevo con otra tarjeta.",
+      "status_code": 1220
+    }
+  },
+  {
+    "key": "ExternalPaymentFailed",
+    "http_status_code": "400",
+    "response": {
+      "message": "Tu compra no pudo ser completada. Por favor, vuelve a intentarlo en unos minutos.",
+      "status_code": 1221
+    }
+  },
+  {
+    "key": "TicketsRefundBooking",
+    "http_status_code": "400",
+    "response": {
+      "message": "Tu compra no pudo ser completada. Por favor, vuelve a intentarlo en unos minutos.",
+      "status_code": 1222
+    }
+  }
+]
