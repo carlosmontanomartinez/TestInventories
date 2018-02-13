@@ -1,25 +1,23 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using Inventories.Data.EntityFramework.Context;
+﻿using System.Threading.Tasks;
 using Inventories.Data.EntityFramework.Models;
-using Inventories.Infrastructure.Interfaces;
-using Inventories.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Inventories.Data.Interfaces;
+using Inventories.Data.EntityFramework.Core;
 
 namespace Inventories.Infrastructure.Services
 {
-    public class ConsessionCinemaService : GenericRepository<ConcessionCinema>, IConsessionCinemaService
+    public class ConsessionCinemaService //: GenericRepository<ConsessionCinema>
     {
-        public ConsessionCinemaService(FoodsMxDbContext context) : base(context)
-        {
-        }
+        //public IUnitOfWork UnitOfWork { get; private set; }
 
-        public async Task<ConcessionCinema> GetAsync(int cinemaId, int hopk)
-        {
-            var query = await GetAll().Include(x=>x.Cinema).Include(x=>x.Status).FirstOrDefaultAsync(x=> x.CinemaId == cinemaId && x.Hopk == hopk);
-            return query;
-        }
+        //public ConsessionCinemaService(IUnitOfWork unitOfWork)
+        //{
+        //    UnitOfWork = unitOfWork;
+        //}
 
-
+        //public async Task<ConsessionCinema> GetAsync(int cinemaId, int hopk)
+        //{
+        //    return await UnitOfWork.ConsessionCinemaRepository.GetAll().Include(x => x.Cinema).Include(x => x.Status).FirstOrDefaultAsync(x => x.CinemaId == cinemaId && x.Hopk == hopk);
+        //}
     }
 }

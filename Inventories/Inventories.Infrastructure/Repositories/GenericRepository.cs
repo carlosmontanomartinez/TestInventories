@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
-using Inventories.Data.EntityFramework.Context;
-using Inventories.Infrastructure.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Inventories.Infrastructure.Interfaces;
 
 namespace Inventories.Infrastructure.Repositories
 {
-    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected DbContext _context;
+        public DbContext _context;
 
-        protected GenericRepository(DbContext context)
+        public GenericRepository(DbContext context)
         {
             _context = context;
         }
@@ -24,7 +22,7 @@ namespace Inventories.Infrastructure.Repositories
             return _context.Set<T>();
         }
 
-        public virtual async Task<ICollection<T>> GetAllAsyn()
+        public virtual async Task<ICollection<T>> GetAllAsync()
         {
 
             return await _context.Set<T>().ToListAsync();
@@ -48,7 +46,7 @@ namespace Inventories.Infrastructure.Repositories
             return t;
         }
 
-        public virtual async Task<T> AddAsyn(T t)
+        public virtual async Task<T> AddAsync(T t)
         {
             _context.Set<T>().Add(t);
             await _context.SaveChangesAsync();
@@ -82,7 +80,7 @@ namespace Inventories.Infrastructure.Repositories
             _context.SaveChanges();
         }
 
-        public virtual async Task<int> DeleteAsyn(T entity)
+        public virtual async Task<int> DeleteAsync(T entity)
         {
             _context.Set<T>().Remove(entity);
             return await _context.SaveChangesAsync();

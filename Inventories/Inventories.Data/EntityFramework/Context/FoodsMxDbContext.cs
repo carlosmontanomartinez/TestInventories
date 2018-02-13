@@ -12,9 +12,10 @@ namespace Inventories.Data.EntityFramework.Context
 {
     public class FoodsMxDbContext : DbContext
     {
-        public virtual DbSet<ConcessionCinema> Concession_Cinema { get; set; }
+        public virtual DbSet<ConsessionCinema> Concession_Cinema { get; set; }
         public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<Cinema> Cinema { get; set; }
+        public virtual DbSet<PromotionPrice> PromotionPrice { get; set; }
 
         public FoodsMxDbContext(DbContextOptions<FoodsMxDbContext>
             dbContextOptions) : base(dbContextOptions)

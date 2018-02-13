@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Inventories.Data.EntityFramework.Context;
+﻿using System.Threading.Tasks;
 using Inventories.Data.EntityFramework.Models;
-using Inventories.Infrastructure.Interfaces;
-using Inventories.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Inventories.Data.Interfaces;
 
 namespace Inventories.Infrastructure.Services
 {
-    public class StatusService : GenericRepository<Status>, IStatusService
+    public class StatusService
     {
-        public StatusService(FoodsMxDbContext context) : base(context)
+        public IUnitOfWork UnitOfWork { get; private set; }
+
+        public StatusService(IUnitOfWork unitOfWork)
         {
+            UnitOfWork = unitOfWork;
         }
 
         public async Task<Status> GetAsync(string code)
         {
-            var query = await GetAll().FirstOrDefaultAsync(x => x.Code == code);
-            return query;
+            return await UnitOfWork.StatusRepository.GetAll().FirstOrDefaultAsync(x => x.Code == code);
         }
     }
 }

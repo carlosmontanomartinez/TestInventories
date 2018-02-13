@@ -1,15 +1,13 @@
 ﻿using Inventories.Data.EntityFramework.Context;
-using Inventories.Data.Interfaces;
-using Inventories.Data.Models;
-using Inventories.Data.Models.Errors;
 using Inventories.Infrastructure.Interfaces;
-using Inventories.Infrastructure.Services;
+using Inventories.Data.Models.Errors;
 using Inventories.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Inventories.Infrastructure.Repositories;
 
 namespace Inventories
 {
@@ -28,23 +26,18 @@ namespace Inventories
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSingleton<IApiConfigurable>(new Configuration()
+            services.AddSingleton<Data.Interfaces.IApiConfiguration>(new Configuration()
             {
                 ApplicationName = Configuration.GetSection("Errors:ApplicationName").Value,
                 Version = Configuration.GetSection("Errors:Version").Value
             });
-
             var connectionString = Configuration.GetConnectionString("FoodsMxDbConnection");
-
-            services.AddEntityFrameworkSqlServer().AddDbContext<FoodsMxDbContext>((serviceProvider, options) => options.UseSqlServer(connectionString).UseInternalServiceProvider(serviceProvider));
-
+            services.AddEntityFrameworkSqlServer()
+                    .AddDbContext<FoodsMxDbContext>((serviceProvider, options) => options.UseSqlServer(connectionString)
+                                                    .UseInternalServiceProvider(serviceProvider));
             var dbContextOptionsbuilder = new DbContextOptionsBuilder<FoodsMxDbContext>().UseSqlServer(connectionString);
-
             services.AddSingleton(dbContextOptionsbuilder.Options);
-
-            services.AddScoped<IConsessionCinemaService, ConsessionCinemaService>();
-            services.AddScoped<IStatusService, StatusService>();
-            services.AddScoped<ICinemaService, CinemaService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

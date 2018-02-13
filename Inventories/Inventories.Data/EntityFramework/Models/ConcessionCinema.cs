@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Inventories.Data.EntityFramework.Models
 {
-    public partial class ConcessionCinema
+    public partial class ConsessionCinema
     {
         [Key]
         public int Id { get; set; }

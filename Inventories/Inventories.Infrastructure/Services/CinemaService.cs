@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Inventories.Data.EntityFramework.Context;
+﻿using System.Threading.Tasks;
 using Inventories.Data.EntityFramework.Models;
-using Inventories.Infrastructure.Interfaces;
-using Inventories.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Inventories.Data.Interfaces;
 
 namespace Inventories.Infrastructure.Services
 {
-    public class CinemaService : GenericRepository<Cinema>, ICinemaService
+    public class CinemaService
     {
-        public CinemaService(FoodsMxDbContext context) : base(context)
+        public IUnitOfWork UnitOfWork { get; private set; }
+
+        public CinemaService(IUnitOfWork unitOfWork)
         {
+            UnitOfWork = unitOfWork;
         }
 
         public async Task<Cinema> GetAsync(string vistaId)
         {
-            var query = await GetAll().FirstOrDefaultAsync(x => x.VistaId == vistaId);
-            return query;
+            return await UnitOfWork.CinemaRepository.GetAll().FirstOrDefaultAsync(x => x.VistaId == vistaId);
         }
     }
 }

@@ -1,62 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Services.Description;
-using CinepolisApiKey.Data.Api.Generic;
 using Inventories.Data.Interfaces;
-using Inventories.Data.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using CinepolisApiKey.Data.Api.Interfaces;
-using Inventories.Data.EntityFramework.Context;
 using Inventories.Data.Models.Api;
-using Inventories.Infrastructure.Interfaces;
-using Inventories.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
+using Inventories.Infrastructure.Interfaces;
 
 namespace Inventories.Controllers
 {
     [Route("")]
     public class ValuesController : Controller
     {
-        private readonly IApiConfigurable _errorsConfiguration;
-        private readonly IConsessionCinemaService _consessionCinemaService;
-        private readonly IStatusService _statusService;
-        private readonly ICinemaService _cinemaService;
+        private readonly IApiConfiguration _errorsConfiguration;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ValuesController(
-            IApiConfigurable errorsConfiguration, 
-            IConsessionCinemaService consessionService, 
-            IStatusService statusService,
-            ICinemaService cinemaService)
+        public ValuesController(IApiConfiguration errorsConfiguration, IUnitOfWork unitOfWork)
         {
+            _unitOfWork = unitOfWork;
             _errorsConfiguration = errorsConfiguration;
-            _consessionCinemaService = consessionService;
-            _statusService = statusService;
-            _cinemaService = cinemaService;
         }
     
-        // GET api/values
-        [HttpGet]
-        public async Task<IEnumerable<string>> Get(List<Inventory> inventories)
+        [HttpPost("inventories")]
+        public async Task<IActionResult> Inventories([FromBody]List<Inventory> inventories)
         {
             try
             {
-                foreach (var item in inventories)
+                if(ModelState.IsValid)
                 {
-                    var cinema = await _cinemaService.GetAsync(item.CinemaVistaId);
-                    //var consessionCinema = await _consessionCinemaService.GetAsync(cinema.Id, item.Hopk);
+                    foreach (var item in inventories)
+                    {
+                        var cinema = await _unitOfWork
+                            .CinemaRepository.GetAll()
+                            .FirstOrDefaultAsync(x => x.VistaId == item.CinemaVistaId);
 
-                    var status = await _statusService.GetAsync(item.IsAvailable ? "Active" : "Inactive");
-                    //consessionCinema.Stock = item.StokQuantity;
-                    //consessionCinema.Status = status;
+                        if(cinema is null)
+                        {
+                            var error = Api.Errors.Errors.Get(
+                                "sync_inventories",
+                                "CinemaNotFound",
+                                _errorsConfiguration.ApplicationName,
+                                _errorsConfiguration.Version, null);
+                            return Content(error.HttpStatusCode.ToString(), error.Response.ToString());
+                        }
 
-                    //await _consessionCinemaService.UpdateAsyn(consessionCinema, )
+                        var consessionCinema = await _unitOfWork
+                            .ConsessionCinemaRepository
+                            .GetAll().Include(x => x.Cinema)
+                            .Include(x => x.Status)
+                            .FirstOrDefaultAsync(x => x.CinemaId == cinema.Id && x.Hopk == item.Hopk);
+
+                        if (consessionCinema is null)
+                        {
+                            var error = Api.Errors.Errors.Get(
+                                "sync_inventories",
+                                "HopkNotFound",
+                                _errorsConfiguration.ApplicationName,
+                                _errorsConfiguration.Version, null);
+                            return Content(error.HttpStatusCode.ToString(), error.Response.ToString());
+                        }
+
+                        var status = await _unitOfWork
+                            .StatusRepository.GetAll()
+                            .FirstOrDefaultAsync(x => x.Code == (item.IsAvailable ? "Active" : "Inactive"));
+
+                        consessionCinema.Stock = item.StokQuantity;
+                        consessionCinema.Status = status;
+
+                        var t = await _unitOfWork
+                            .ConsessionCinemaRepository
+                            .UpdateAsync(consessionCinema, consessionCinema.Id);
+                    }
+
+                    var errors = _errorsConfiguration;
+                    return Ok();
                 }
-                
-                var errors = _errorsConfiguration;
-                return new string[] { _errorsConfiguration?.ApplicationName, _errorsConfiguration?.Version };
+                else
+                {
+                    var error = Api.Errors.Errors.Get(
+                        "sync_inventories",
+                        "InvalidModel",
+                        _errorsConfiguration.ApplicationName,
+                        _errorsConfiguration.Version, null);
+                    return Content(error.HttpStatusCode.ToString(), error.Response.ToString());
+                }
             }
             catch (Exception e)
             {
@@ -66,29 +93,141 @@ namespace Inventories.Controllers
             
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("prices")]
+        public async Task<IActionResult> Prices([FromBody]List<Price> Prices)
         {
-            return "value";
-        }
+            try
+            {
+                foreach (var item in Prices)
+                {
+                    var cinema = await _unitOfWork
+                        .CinemaRepository.GetAll()
+                        .FirstOrDefaultAsync(x => x.VistaId == item.CinemaVistaId);
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
+                    if (cinema is null)
+                    {
+                        var error = Api.Errors.Errors.Get(
+                            "sync_inventories",
+                            "CinemaNotFound",
+                            _errorsConfiguration.ApplicationName,
+                            _errorsConfiguration.Version, null);
+                        return Content(error.HttpStatusCode.ToString(), error.Response.ToString());
+                    }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+                    var consessionCinema = await _unitOfWork
+                        .ConsessionCinemaRepository
+                        .GetAll().Include(x => x.Cinema)
+                        .Include(x => x.Status)
+                        .FirstOrDefaultAsync(x => x.CinemaId == cinema.Id && x.Hopk == item.Hopk);
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+                    if (consessionCinema is null)
+                    {
+                        var error = Api.Errors.Errors.Get(
+                            "sync_inventories",
+                            "HopkNotFound",
+                            _errorsConfiguration.ApplicationName,
+                            _errorsConfiguration.Version, null);
+                        return Content(error.HttpStatusCode.ToString(), error.Response.ToString());
+                    }
+
+                    var promotionPrice = await _unitOfWork
+                        .PromotionPriceRepostory.GetAll()
+                        .FirstOrDefaultAsync(x => x.ConsesionCinemaId == consessionCinema.Id);
+                    if(promotionPrice is null)
+                    {
+                        await _unitOfWork.PromotionPriceRepostory
+                                         .AddAsync(new Data.EntityFramework.Models.PromotionPrice
+                                         {
+                                             ConsesionCinemaId = consessionCinema.Id,
+                                             StartDate = DateTime.Now,
+                                             EndDate = DateTime.Now,
+                                             Price = item.PromotionalPrice
+                                         });
+
+                    }
+                    else
+                    {
+                        promotionPrice.Price = item.PromotionalPrice;
+
+                        var updatedprice = await _unitOfWork
+                            .PromotionPriceRepostory
+                            .UpdateAsync(promotionPrice, promotionPrice.Id);
+                    }
+
+                    consessionCinema.Price = item.NormalPrice; 
+
+                    var t = await _unitOfWork
+                        .ConsessionCinemaRepository
+                        .UpdateAsync(consessionCinema, consessionCinema.Id);
+                }
+
+                var errors = _errorsConfiguration;
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+
         }
+        //[HttpPost("consessions")]
+        //public async Task<OkResult> Consessions([FromBody]List<Concession> Consessions)
+        //{
+        //    try
+        //    {
+        //        foreach (var item in Consessions)
+        //        {
+        //            var cinema = await _unitOfWork
+        //                .CinemaRepository.GetAll()
+        //                .FirstOrDefaultAsync(x => x.VistaId == item.CinemaVistaId);
+        //            var consessionCinema = await _unitOfWork
+        //                .ConsessionCinemaRepository
+        //                .GetAll().Include(x => x.Cinema)
+        //                .Include(x => x.Status)
+        //                .FirstOrDefaultAsync(x => x.CinemaId == cinema.Id && x.Hopk == item.Hopk);
+        //            var promotionPrice = await _unitOfWork
+        //                .PromotionPriceRepostory.GetAll()
+        //                .FirstOrDefaultAsync(x => x.ConsesionCinemaId == consessionCinema.Id);
+        //            if (promotionPrice is null)
+        //            {
+        //                await _unitOfWork.PromotionPriceRepostory
+        //                                 .AddAsync(new Data.EntityFramework.Models.PromotionPrice
+        //                                 {
+        //                                     ConsesionCinemaId = consessionCinema.Id,
+        //                                     StartDate = DateTime.Now,
+        //                                     EndDate = DateTime.Now,
+        //                                     Price = item.PromotionalPrice
+        //                                 });
+
+        //            }
+        //            else
+        //            {
+        //                promotionPrice.Price = item.PromotionalPrice;
+
+        //                var updatedprice = await _unitOfWork
+        //                    .PromotionPriceRepostory
+        //                    .UpdateAsync(promotionPrice, promotionPrice.Id);
+        //            }
+
+        //            consessionCinema.Price = item.NormalPrice;
+
+        //            var t = await _unitOfWork
+        //                .ConsessionCinemaRepository
+        //                .UpdateAsync(consessionCinema, consessionCinema.Id);
+
+
+        //        }
+
+        //        var errors = _errorsConfiguration;
+        //        return Ok();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e);
+        //        throw;
+        //    }
+
+        //}
     }
 }

@@ -24,7 +24,7 @@ namespace Inventories.Middlewares
             _params = settings;
         }
 
-        public Task Invoke(HttpContext context, IApiConfigurable errorsConfiguration)
+        public Task Invoke(HttpContext context, IApiConfiguration errorsConfiguration)
         {
             try
             {

@@ -10,11 +10,11 @@ namespace Inventories.Infrastructure.Interfaces
     public interface IGenericRepository<T> where T : class
     {
         T Add(T t);
-        Task<T> AddAsyn(T t);
+        Task<T> AddAsync(T t);
         int Count();
         Task<int> CountAsync();
         void Delete(T entity);
-        Task<int> DeleteAsyn(T entity);
+        Task<int> DeleteAsync(T entity);
         void Dispose();
         T Find(Expression<Func<T, bool>> match);
         ICollection<T> FindAll(Expression<Func<T, bool>> match);
@@ -24,7 +24,7 @@ namespace Inventories.Infrastructure.Interfaces
         Task<ICollection<T>> FindByAsyn(Expression<Func<T, bool>> predicate);
         T Get(int id);
         IQueryable<T> GetAll();
-        Task<ICollection<T>> GetAllAsyn();
+        Task<ICollection<T>> GetAllAsync();
         IQueryable<T> GetAllIncluding(params Expression<Func<T, object>>[] includeProperties);
         Task<T> GetAsync(int id);
         void Save();

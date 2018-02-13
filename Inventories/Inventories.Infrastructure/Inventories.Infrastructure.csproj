@@ -8,4 +8,16 @@
     <ProjectReference Include="..\Inventories.Data\Inventories.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Interfaces\ICinemaService.cs" />
+    <Compile Remove="Interfaces\IConsessionCinemaService.cs" />
+    <Compile Remove="Interfaces\IStatusService.cs" />
+    <Compile Remove="Services\CinemaService.cs" />
+    <Compile Remove="Services\ConsessionCinemaService.cs" />
+    <Compile Remove="Services\StatusService.cs" />
+  </ItemGroup>
 </Project>

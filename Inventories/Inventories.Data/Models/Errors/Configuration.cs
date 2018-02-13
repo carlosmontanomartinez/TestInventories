@@ -5,7 +5,7 @@ using Inventories.Data.Interfaces;
 
 namespace Inventories.Data.Models.Errors
 {
-    public class Configuration : IApiConfigurable
+    public class Configuration : IApiConfiguration
     {
         public string ApplicationName { get; set; }
         public string Version { get; set; }
